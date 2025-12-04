@@ -25,10 +25,17 @@ const getCurrentPreciosByProducto = async (req, res) => {
 
 const getAllCurrentPrecios = async (req, res) => {
     try {
+        const { bajas } = req.query;
+        const whereClause = {};
+
+        if (bajas === 'true') {
+            whereClause.fechaBaja = { [Op.not]: null };
+        } else {
+            whereClause.fechaBaja = null;
+        }
+
         const precios = await ListaPrecio.findAll({
-            where: {
-                fechaBaja: null
-            },
+            where: whereClause,
             include: [
                 { model: Producto },
                 { model: Lista },
@@ -95,9 +102,28 @@ const addPrecio = async (req, res) => {
     }
 };
 
+const deletePrecio = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const precio = await ListaPrecio.findByPk(id);
+
+        if (!precio) {
+            return res.status(404).json({ error: 'Precio not found' });
+        }
+
+        precio.fechaBaja = new Date();
+        await precio.save();
+
+        res.json({ message: 'Precio deactivated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     getAllCurrentPrecios,
     getCurrentPreciosByProducto,
     getHistoryByProducto,
-    addPrecio
+    addPrecio,
+    deletePrecio
 };

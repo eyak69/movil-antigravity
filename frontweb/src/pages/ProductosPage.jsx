@@ -68,7 +68,18 @@ const ProductosPage = () => {
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         { field: 'nombre', headerName: 'Nombre', flex: 1, minWidth: 200 },
-        { field: 'precio', headerName: 'Precio Base', width: 150 },
+        {
+            field: 'precio',
+            headerName: 'Precio Base',
+            width: 150,
+            type: 'number',
+            align: 'right',
+            headerAlign: 'right',
+            valueFormatter: (value) => {
+                if (value == null) return '';
+                return new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+            }
+        },
         {
             field: 'actions',
             headerName: 'Acciones',

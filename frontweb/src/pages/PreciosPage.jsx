@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Select, FormControl, InputLabel, Card, CardContent, IconButton, InputAdornment } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Select, FormControl, InputLabel, Card, CardContent, IconButton, InputAdornment, FormControlLabel, Checkbox } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { esES } from '@mui/x-data-grid/locales';
-import { Add, Search } from '@mui/icons-material';
+import { Add, Search, Delete } from '@mui/icons-material';
 import api from '../services/api';
 
 const PreciosPage = () => {
@@ -18,6 +18,7 @@ const PreciosPage = () => {
     const [selectedMoneda, setSelectedMoneda] = useState('');
     const [selectedLista, setSelectedLista] = useState('');
     const [searchText, setSearchText] = useState('');
+    const [showBajas, setShowBajas] = useState(false);
 
     // Form State
     const [newPrice, setNewPrice] = useState({ productoId: '', listaId: '', monedaId: '', precio: '' });
@@ -29,8 +30,11 @@ const PreciosPage = () => {
 
     useEffect(() => {
         fetchCatalogs();
-        fetchPrecios();
     }, []);
+
+    useEffect(() => {
+        fetchPrecios();
+    }, [showBajas]);
 
     const fetchCatalogs = async () => {
         try {
@@ -49,7 +53,9 @@ const PreciosPage = () => {
 
     const fetchPrecios = async () => {
         try {
-            const response = await api.get('/listaprecios');
+            const response = await api.get('/listaprecios', {
+                params: { bajas: showBajas }
+            });
             setPrecios(response.data);
         } catch (error) {
             console.error('Error fetching precios:', error);
@@ -70,6 +76,17 @@ const PreciosPage = () => {
             setSelectedProduct(null);
         } catch (error) {
             console.error('Error saving precio:', error);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Estás seguro de que deseas dar de baja este precio?')) {
+            try {
+                await api.delete(`/listaprecios/${id}`);
+                fetchPrecios();
+            } catch (error) {
+                console.error('Error deleting precio:', error);
+            }
         }
     };
 
@@ -98,13 +115,48 @@ const PreciosPage = () => {
         { field: 'producto', headerName: 'Producto', flex: 1, minWidth: 200, valueGetter: (value, row) => row.Producto?.nombre || '' },
         { field: 'lista', headerName: 'Lista', flex: 1, minWidth: 150, valueGetter: (value, row) => row.Listum?.nombrecorto || '' },
         { field: 'moneda', headerName: 'Moneda', width: 100, valueGetter: (value, row) => row.Moneda?.simbolo || '' },
-        { field: 'precio', headerName: 'Precio', width: 120 },
+        {
+            field: 'precio',
+            headerName: 'Precio',
+            width: 120,
+            type: 'number',
+            align: 'right',
+            headerAlign: 'right',
+            valueFormatter: (value) => {
+                if (value == null) return '';
+                return new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+            }
+        },
         { field: 'fechaAlta', headerName: 'Fecha Alta', width: 200 },
+        { field: 'fechaBaja', headerName: 'Fecha Baja', width: 200 },
+        {
+            field: 'actions',
+            headerName: 'Acciones',
+            width: 100,
+            renderCell: (params) => (
+                !params.row.fechaBaja && (
+                    <IconButton onClick={() => handleDelete(params.row.id)} color="error">
+                        <Delete />
+                    </IconButton>
+                )
+            ),
+        },
     ];
 
     const productColumns = [
         { field: 'nombre', headerName: 'Nombre', flex: 1 },
-        { field: 'precio', headerName: 'Precio Base', width: 120 },
+        {
+            field: 'precio',
+            headerName: 'Precio Base',
+            width: 120,
+            type: 'number',
+            align: 'right',
+            headerAlign: 'right',
+            valueFormatter: (value) => {
+                if (value == null) return '';
+                return new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+            }
+        },
         {
             field: 'action',
             headerName: 'Acción',
@@ -132,7 +184,7 @@ const PreciosPage = () => {
 
             <Card sx={{ mb: 2 }}>
                 <CardContent>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                         <FormControl sx={{ minWidth: 200 }}>
                             <InputLabel>Filtrar por Lista</InputLabel>
                             <Select
@@ -165,6 +217,15 @@ const PreciosPage = () => {
                             fullWidth
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={showBajas}
+                                    onChange={(e) => setShowBajas(e.target.checked)}
+                                />
+                            }
+                            label="Ver Bajas"
                         />
                     </Box>
                 </CardContent>
