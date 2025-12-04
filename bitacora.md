@@ -1,33 +1,42 @@
 # Bitácora de Desarrollo - Proyecto "Mi Agenda"
 
-**Fecha:** 04 de Diciembre de 2025
+## 04 de Diciembre de 2025 (Madrugada)
 
-## Resumen de la Sesión
+### Resumen
+Optimización de rendimiento, soporte multimedia (fotos), corrección de persistencia/sync y despliegue inicial.
 
-En esta sesión nos enfocamos en optimizar la aplicación, agregar soporte multimedia, corregir errores críticos de persistencia y sincronización, y finalmente desplegar el código en un repositorio remoto.
+### Cambios Detallados
+- **Optimización:** Uso de `React.memo` y `useCallback` en `PersonasScreen` para mejorar rendimiento de listas.
+- **Persistencia:** Corrección del bug que borraba la DB local al reiniciar (`DROP TABLE` eliminado).
+- **Fotos:**
+    - Campo `foto` agregado a MySQL y SQLite.
+    - Integración de `expo-image-picker` (Cámara/Galería).
+    - Visualización de Avatares en listas.
+- **Dev Tools:**
+    - Corrección de lógica "Nuke" para reiniciar metadata de sync.
+    - Botón "Borrar Solo Local" para pruebas de pull.
+- **Despliegue:** Inicialización de Git y push a GitHub.
 
-## Cambios Realizados
+## 03 de Diciembre de 2025
 
-### 1. Optimización y Correcciones
-- **PersonasScreen:** Se solucionó un `ReferenceError` y se optimizó el rendimiento de la lista (`FlatList`) utilizando `React.memo` y `useCallback` para evitar re-renderizados innecesarios.
-- **Persistencia de Datos:** Se eliminó una sentencia `DROP TABLE` accidental que borraba la base de datos local al reiniciar la aplicación, asegurando que los datos persistan offline.
+### Resumen
+Implementación de la navegación principal, gestión de productos y diseño base de la interfaz.
 
-### 2. Soporte para Fotos
-- **Backend (MySQL):** Se agregó la columna `foto` (tipo TEXT para Base64) a la tabla `personas`.
-- **Frontend (SQLite):** Se actualizó el esquema local para incluir el campo `foto`.
-- **UI:**
-    - Se integró `expo-image-picker` para permitir seleccionar fotos de la **Galería** o tomar fotos con la **Cámara**.
-    - Se actualizó el listado de contactos para mostrar un **Avatar** con la foto del contacto.
-- **Sincronización:** Se actualizó la lógica de Sync para transmitir las imágenes en Base64 entre el cliente y el servidor.
-
-### 3. Herramientas de Desarrollo (Dev Tools)
-- **Corrección de "Nuke":** Se corrigió la lógica de borrado masivo para que también elimine la metadata `last_sync`. Esto soluciona el problema donde, tras borrar los datos locales, la app no volvía a descargar los datos del servidor (Initial Pull).
-- **Nueva Funcionalidad:** Se agregó un botón **"Borrar Solo Local"** para facilitar las pruebas de sincronización (bajada de datos) sin afectar al servidor.
-
-### 4. Despliegue y Documentación
-- **Git:** Se inicializó el repositorio, se configuró el `.gitignore` y se subió el código a GitHub.
-- **Repositorio:** [https://github.com/eyak69/movil-antigravity](https://github.com/eyak69/movil-antigravity)
-- **Documentación:** Se actualizó `documentation.md` con las nuevas funcionalidades y detalles técnicos.
+### Cambios Detallados
+- **Navegación:**
+    - Instalación y configuración de `React Navigation`.
+    - Implementación de `BottomTabNavigator` para pestañas principales (Inicio, Personas, Productos, Dev).
+    - Implementación de `StackNavigator` para flujos de formularios.
+- **Productos:**
+    - Creación de `ProductosScreen` (Listado) y `ProductoFormScreen` (Alta/Edición).
+    - Implementación de CRUD completo conectado al backend.
+- **Interfaz de Usuario (UI):**
+    - Integración de `React Native Paper` como librería de componentes.
+    - Diseño de `HomeScreen` con menú de acceso rápido.
+    - Unificación de estilos y colores.
+- **Backend & Configuración:**
+    - Puesta en marcha de servicios (Backend Node.js + Frontend Expo).
+    - Verificación de estructura del proyecto y scripts de inicio.
 
 ---
 *Generado automáticamente por Antigravity AI.*
