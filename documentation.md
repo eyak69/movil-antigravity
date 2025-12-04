@@ -4,6 +4,8 @@
 
 "Mi Agenda" es una aplicación móvil híbrida desarrollada con React Native y Expo que permite la gestión de contactos (Personas) y productos. La aplicación está diseñada para funcionar **offline-first**, utilizando una base de datos local SQLite, y cuenta con un sistema de **sincronización bidireccional** con un servidor backend centralizado.
 
+**Repositorio:** [https://github.com/eyak69/movil-antigravity](https://github.com/eyak69/movil-antigravity)
+
 ### Arquitectura del Sistema
 
 #### Frontend (Móvil)
@@ -28,6 +30,7 @@
 - **Listado:** Visualización de contactos con indicadores de sincronización (nube verde/roja).
 - **CRUD:** Crear, Leer, Actualizar y Eliminar contactos localmente.
 - **Importación:** Capacidad de importar contactos desde la agenda del teléfono.
+- **Fotos:** Soporte para agregar fotos desde la **Cámara** o **Galería**.
 - **Búsqueda y Ordenamiento:** Filtrado por nombre y ordenamiento ascendente/descendente.
 - **Validación:** Prevención de actualizaciones innecesarias si no hay cambios en los datos.
 
@@ -75,6 +78,7 @@ Ubicación: `back/models/Persona.js` y `front/context/DatabaseContext.js`
 | `telefono` | STRING | Número de teléfono. |
 | `email` | STRING | Email (Opcional). |
 | `direccion` | STRING | Dirección (Opcional). |
+| `foto` | TEXT | Foto en Base64 (Opcional). |
 | `updatedAt` | DATETIME | Timestamp para sincronización. |
 | `is_synced` | BOOLEAN | (Frontend) Estado de sincronización. |
 | `deleted` | BOOLEAN | Flag para borrado lógico. |
@@ -96,7 +100,7 @@ Ubicación: `back/models/Producto.js` y `front/context/DatabaseContext.js`
 - **`PersonasScreen.js`**: Lógica de listado, búsqueda, ordenamiento, importación y sync.
 - **`PersonaFormScreen.js`**: Formulario con validación y detección de cambios.
 - **`ProductosScreen.js`**: Gestión de inventario.
-- **`DeveloperScreen.js`**: Herramientas "Nuke" para limpiar datos.
+- **`DeveloperScreen.js`**: Herramientas "Nuke" para limpiar datos (Local/Servidor) y opción de "Borrar Solo Local" para pruebas de sync.
 
 #### Servicios y Contexto
 - **`DatabaseContext.js`**: Inicializa SQLite y expone el objeto `db`.
