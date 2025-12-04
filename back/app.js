@@ -3,6 +3,9 @@ const cors = require('cors');
 const sequelize = require('./config/db');
 const productoRoutes = require('./routes/productoRoutes');
 const personaRoutes = require('./routes/personaRoutes');
+const monedaRoutes = require('./routes/monedaRoutes');
+const listaRoutes = require('./routes/listaRoutes');
+const listaPrecioRoutes = require('./routes/listaPrecioRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +20,9 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/personas', personaRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/dev', devRoutes);
+app.use('/api/monedas', monedaRoutes);
+app.use('/api/listas', listaRoutes);
+app.use('/api/listaprecios', listaPrecioRoutes);
 
 // Sincronizar base de datos y arrancar servidor
 sequelize.sync({ force: true })
